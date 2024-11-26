@@ -15,48 +15,48 @@ import {
 } from "@/components/ui/table";
 
 
-import { useGetVehicles } from "@/app/services/queries";
-import { Vehicle } from "@/app/models/vehicle";
+import { useGetUsers } from "@/app/services/queries";
+import { User } from "@/app/models/user";
 
 ///GETTING DATA
-export default function Vehicles() {
-  const vehiclesQuery = useGetVehicles();
-  const vehicles = vehiclesQuery.data || []; // Access the data property
+export default function Parkings() {
+  const userQuery = useGetUsers();
+  const user = userQuery.data || []; // Access the data property
 
   return (
     
     <div className="container mx-auto py-15">
-      <div className="list-label">Vehicles list</div>
-      <DataTable columns={columns} data={vehicles} />
+      <div className="list-label"><h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Users list</h1></div>
+      <DataTable columns={columns} data={user} />
     </div>
   );
 }
 
 ///COLUMS
-export const columns: ColumnDef<Vehicle>[] = [
-  {
+export const columns: ColumnDef<User>[] = [
+  /* {
     accessorKey: "id",
     header: "#",
+  }, */
+  {
+    accessorKey: "firstName",
+    header: "First Name",
   },
   {
-    accessorKey: "registrationPlate",
-    header: "Registration Plate",
+    accessorKey: "lastName",
+    header: "Last Name",
   },
   {
-    accessorKey: "mark",
-    header: "Mark",
+    accessorKey: "address",
+    header: "Address",
   },
   {
-    accessorKey: "model",
-    header: "Models",
+    accessorKey: "vehicles",
+    header: "Vehicles",
   },
   {
-    accessorKey: "year",
-    header: "Year",
-  },
-  {
-    accessorKey: "owner",
-    header: "Owner",
+    accessorKey: "actions",
+    header: "Actions",
   },
 ];
 

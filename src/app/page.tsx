@@ -1,7 +1,5 @@
-
-import Vehicles from "./components/vehicle/Vehicles";
+import Vehicles from "./ui/vehicles/page";
 
 export default function Home() {
-  return (<Vehicles></Vehicles>
-  );
+  return <Vehicles></Vehicles>;
 }
