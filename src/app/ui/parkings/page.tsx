@@ -30,40 +30,53 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChangeEvent, useState } from "react";
 import { axiosInstance } from "@/app/utils/fetcher";
-import { z } from "zod";
 
 ///GETTING DATA
 export default function Parkings() {
   const parkingQuery = useGetParkings();
   const parking = parkingQuery.data || []; // Access the data property
-
+   const { mutate } = useCreateParking();
+  
   const [formData, setFormData] = useState({
     name: "",
     address: "",
     capacity: 0,
   });
 
+  const [open, setOpen] = useState(false);
+
   const handleUpdateInputValue = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleCreateParking = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-    console.log(formData);
-    setFormData({ name: "", address: "", capacity: 0 });
-    await axiosInstance.post("/parking", { name: formData.name, address: formData.address, capacity: formData.capacity });
-    /* mutate(); */
-  };
+    try {
+      event.preventDefault();
+      console.log(formData); 
+      await axiosInstance.post("/parking", {
+        name: formData.name,
+        address: formData.address,
+        capacity: formData.capacity,
+      });
+      setFormData({ name: "", address: "", capacity: 0 });
+      mutate();
+      setOpen(false);
+    } catch (error) {
+      console.log('error:', error);
+      }
+    }
+  
 
   return (
     <div className="container mx-auto py-15">
+     
       <div className="list-label">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Parkings list
+          Parkings List
         </h1>
       </div>
       <div className="align-content-end p-4">
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             {/* <Button variant="outline">Edit Profile</Button> */}
             <Button variant="outline">Create Parking</Button>
@@ -72,11 +85,13 @@ export default function Parkings() {
             <DialogHeader>
               <DialogTitle>Create a new Parking</DialogTitle>
               <DialogDescription>
-                Add the new parking informations. Click save when you're done.
+                Add the new parking informations. Click save when you are done.
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleCreateParking} className="grid gap-4 py-4">
+            <form
+              /* onSubmit={handleCreateParking} */ className="grid gap-4 py-4"
+            >
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
                   Name
