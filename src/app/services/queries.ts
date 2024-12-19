@@ -22,6 +22,9 @@ export function useCreateParking(){
     return useSWR<addParkingDTO>("/parking")
 }
 
+export function useRemoveParkings(id:number){
+    return useSWR(`/parking/${id}`);
+}
 
 ///Users Queries------------------------------------------------
 export function useGetUsers(){

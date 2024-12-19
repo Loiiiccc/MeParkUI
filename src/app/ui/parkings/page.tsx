@@ -1,4 +1,6 @@
 "use client";
+
+import * as React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -30,13 +32,22 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChangeEvent, useState } from "react";
 import { axiosInstance } from "@/app/utils/fetcher";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 
 ///GETTING DATA
 export default function Parkings() {
   const parkingQuery = useGetParkings();
   const parking = parkingQuery.data || []; // Access the data property
-   const { mutate } = useCreateParking();
-  
+  const { mutate } = useCreateParking();
+
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -52,7 +63,7 @@ export default function Parkings() {
   const handleCreateParking = async (event: { preventDefault: () => void }) => {
     try {
       event.preventDefault();
-      console.log(formData); 
+      console.log(formData);
       await axiosInstance.post("/parking", {
         name: formData.name,
         address: formData.address,
@@ -61,15 +72,52 @@ export default function Parkings() {
       setFormData({ name: "", address: "", capacity: 0 });
       mutate();
       setOpen(false);
+      alert("Parking Created !");
     } catch (error) {
-      console.log('error:', error);
-      }
+      console.log("error:", error);
     }
-  
+  };
+
+
+ /*  async function handleDeleteParking(id: string): void {
+    const confirm = window.confirm(
+      "You are going to delete the parking " + id + " /n Are you sure ?"
+    );
+    if (!confirm) {
+      console.log("Deletion aborted");
+    }
+
+    try {
+      
+      await axiosInstance.delete(`/products/${id}`);
+      mutate();
+      alert("Parking deleted !");
+    } catch (error) {
+      alert("Error!!!");
+      console.log("Erreur", error);
+    }
+  } */
+
+  const handleDeleteParking = async (id) => {
+    const confirm = window.confirm(
+      "You are going to delete the parking " + id + " /n Are you sure ?"
+    );
+    if (!confirm) {
+      console.log("Deletion aborted");
+    }
+
+    try {
+      await axiosInstance.delete(`/products/${id}`);
+      mutate();
+      alert("Parking deleted !");
+    } catch (error) {
+      alert("Error!!!");
+      console.log("Erreur", error);
+    }
+  };
 
   return (
     <div className="container mx-auto py-15">
-     
       <div className="list-label">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           Parkings List
@@ -172,6 +220,39 @@ export const columns: ColumnDef<Parking>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const parking = row.original;
+
+      
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(parking.id)}
+            >
+              Show all informations
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Modify</DropdownMenuItem>
+            <DropdownMenuItem
+                className="text-red-700 font-bold "
+                onClick={()=> handleDeleteParking(parking.id)}>
+             
+                Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
@@ -232,7 +313,37 @@ export function DataTable<TData, TValue>({
                       )}
                     </TableCell>
                   ))}
-                </TableRow>
+                  {/* <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            navigator.clipboard.writeText(row.id)
+                          }
+                        >
+                          Show all informations
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Modify</DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <button
+                            className="text-red-700 font-bold "
+                            onClick={handleDeleteParking(row.id)}
+                          >
+                            Delete
+                          </button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>*/}
+                </TableRow> 
               ))
             ) : (
               <TableRow>
